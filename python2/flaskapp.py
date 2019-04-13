@@ -7,13 +7,13 @@ flask_app = Flask("flaskapp")
 
 @flask_app.route("/")
 def index():
-    message = "Hello world \n"
+    message = "Hello world"
     return Response(message, mimetype='text/plain')
 
 
 @flask_app.route("/hello")
 def hello():
-    message = "Hello My flask app \n"
+    message = "Hello My flask app"
     return Response(message, mimetype='text/plain')
 
 

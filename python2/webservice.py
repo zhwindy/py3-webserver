@@ -1,4 +1,5 @@
-# Tested with Python 2.7.9, Linux & Mac OS X
+#!/usr/bin/env python
+# encoding=utf-8
 import socket
 import StringIO
 import sys
@@ -12,10 +13,7 @@ class WSGIServer(object):
 
     def __init__(self, server_address):
         # Create a listening socket
-        self.listen_socket = listen_socket = socket.socket(
-            self.address_family,
-            self.socket_type
-        )
+        self.listen_socket = listen_socket = socket.socket(self.address_family, self.socket_type)
         # Allow to reuse the same address
         listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         # Bind
@@ -36,7 +34,7 @@ class WSGIServer(object):
         listen_socket = self.listen_socket
         while True:
             # New client connection
-            self.client_connection, client_address = listen_socket.accept()
+            self.client_connection, _ = listen_socket.accept()
             # Handle one request and close the client connection. Then
             # loop over to wait for another client connection
             self.handle_one_request()
@@ -62,6 +60,7 @@ class WSGIServer(object):
         self.finish_response(result)
 
     def parse_request(self, text):
+        print(100 * "*", text)
         request_line = text.splitlines()[0]
         request_line = request_line.rstrip('\r\n')
         # Break down the request line into components
@@ -77,18 +76,18 @@ class WSGIServer(object):
         # to emphasize the required variables and their values
         #
         # Required WSGI variables
-        env['wsgi.version']      = (1, 0)
-        env['wsgi.url_scheme']   = 'http'
-        env['wsgi.input']        = StringIO.StringIO(self.request_data)
-        env['wsgi.errors']       = sys.stderr
-        env['wsgi.multithread']  = False
+        env['wsgi.version'] = (1, 0)
+        env['wsgi.url_scheme'] = 'http'
+        env['wsgi.input'] = StringIO.StringIO(self.request_data)
+        env['wsgi.errors'] = sys.stderr
+        env['wsgi.multithread'] = False
         env['wsgi.multiprocess'] = False
-        env['wsgi.run_once']     = False
+        env['wsgi.run_once'] = False
         # Required CGI variables
-        env['REQUEST_METHOD']    = self.request_method    # GET
-        env['PATH_INFO']         = self.path              # /hello
-        env['SERVER_NAME']       = self.server_name       # localhost
-        env['SERVER_PORT']       = str(self.server_port)  # 8888
+        env['REQUEST_METHOD'] = self.request_method    # GET
+        env['PATH_INFO'] = self.path              # /hello
+        env['SERVER_NAME'] = self.server_name       # localhost
+        env['SERVER_PORT'] = str(self.server_port)  # 8888
         return env
 
     def start_response(self, status, response_headers, exc_info=None):
