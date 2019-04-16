@@ -13,8 +13,14 @@ def grim_repar(signum, frame):
     """
     处理子进程终止信号
     """
-    pid, status = os.wait()
-    # print("Child Pid :{} termial with status {}".format(pid, status))
+    while True:
+        try:
+            pid, status = os.waitpid(-1, os.WNOHANG)
+        except OSError:
+            return
+        if pid == 0:
+            return
+        # print("Child Pid :{} termial with status {}".format(pid, status))
 
 
 def handle_one_request(client):

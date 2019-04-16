@@ -11,7 +11,6 @@ SERVER_ADDRESS = (HOST, PORT) = "", 8888
 
 def main(max_clients, max_conns):
     socks = []
-    print(20*"#", max_clients, max_conns)
     for _ in range(max_clients):
         pid = os.fork()
         if pid == 0:
