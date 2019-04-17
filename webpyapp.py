@@ -6,7 +6,7 @@ urls = (
     '/(.*)', 'hello'
 )
 
-app = web.application(urls, globals())
+application = web.application(urls, globals())
 
 
 class hello(object):
@@ -15,5 +15,7 @@ class hello(object):
         return 'Hello' + name + '!'
 
 
+app = application.wsgifunc()
+
 if __name__ == '__main__':
-    app.run()
+    application.run()
