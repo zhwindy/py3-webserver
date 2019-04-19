@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding=utf-8
 from flask import Flask, Response
+import time
 
 flask_app = Flask("flaskapp")
 
@@ -14,6 +15,7 @@ def index():
 @flask_app.route("/hello")
 def hello():
     message = "Hello My flask app \n"
+    time.sleep(1)
     return Response(message, mimetype='text/plain')
 
 
@@ -21,4 +23,4 @@ app = flask_app.wsgi_app
 
 
 if __name__ == "__main__":
-    flask_app.run()
+    flask_app.run(debug=True)
