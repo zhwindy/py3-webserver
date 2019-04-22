@@ -8,13 +8,13 @@ flask_app = Flask("flaskapp")
 
 @flask_app.route("/")
 def index():
-    message = "Hello world \n"
+    message = "Hello world \r\n"
     return Response(message, mimetype='text/plain')
 
 
 @flask_app.route("/hello")
 def hello():
-    message = "Hello My flask app \n"
+    message = "Hello My flask app \r\n"
     time.sleep(1)
     return Response(message, mimetype='text/plain')
 

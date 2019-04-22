@@ -9,19 +9,18 @@ import importlib
 
 class WSGIServer(object):
 
-    FAMILY = (socket.AF_INET, socket.SOCK_STREAM)
+    SOCK_FAMILY = socket.AF_INET
+    SOCK_TYPE = socket.SOCK_STREAM
     MAX_REQUEST_SIZE = 1
-    SOCK_OPT = (socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def __init__(self, address):
-        self.listen_socket = socket.socket(*self.FAMILY)
-        self.listen_socket.setsockopt(*self.SOCK_OPT)
+        self.listen_socket = socket.socket(self.SOCK_FAMILY, self.SOCK_TYPE)
+        self.listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.listen_socket.bind(address)
         self.listen_socket.listen(self.MAX_REQUEST_SIZE)
         host, port = self.listen_socket.getsockname()
         self.server_name = host
         self.port = port
-
         self.headres_set = []
 
     def set_application(self, application):
@@ -48,16 +47,22 @@ class WSGIServer(object):
             self.handle_one_request()
 
     def parse_request(self, data):
+        """
+        解析请求数据
+        """
         request = data.splitlines()[0]
-        request = request.rstrip("\r\n")
+        request = request.rstrip()
         self.request_method, self.path, self.version = request.split()
-    
+
     def handle_one_request(self):
         """
         处理请求
         """
-        request_data = self.client_connect.recv(1024)
+        request_data = self.client_connect.recv(2048)
         self.request_data = request_data.decode()
+        print(30 * "=")
+        print(self.request_data)
+        print(30 * "=")
         self.parse_request(self.request_data)
 
         env = self.get_environ()
@@ -65,19 +70,17 @@ class WSGIServer(object):
         response_body = self.application(env, self.start_response)
         self.finsh_response(response_body)
 
-        self.client_connect.close()
-    
     def finsh_response(self, response_body):
-        status, respone_header = self.headres_set
-        response = "HTTP/1.1 {status} \r\\n".format(status=status)
+        status_code, respone_header = self.headres_set
+        response = "HTTP/1.1 {status} \n".format(status=status_code)
         for k, v in respone_header:
-            tmp = k + ":" + v + "\r\\n"
-            response += tmp
-        response += "\r\\n"
+            response += "{}:{}\n".format(k, v)
+        response += "\n"
         for txt in response_body:
-            response += txt.decode()
+            response += "{}\n".format(txt.decode())
 
         self.client_connect.sendall(response.encode())
+        self.client_connect.close()
 
     def get_environ(self):
         """
