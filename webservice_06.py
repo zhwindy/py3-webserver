@@ -60,9 +60,9 @@ class WSGIServer(object):
         """
         request_data = self.client_connect.recv(2048)
         self.request_data = request_data.decode()
-        print(30 * "=")
+        print(30 * "=", "request-start", 20 * "=")
         print(self.request_data)
-        print(30 * "=")
+        print(30 * "=", "request-end", 20 * "=")
         self.parse_request(self.request_data)
 
         env = self.get_environ()
@@ -78,6 +78,9 @@ class WSGIServer(object):
         response += "\n"
         for txt in response_body:
             response += "{}\n".format(txt.decode())
+        print(30 * "*", "response-start", 20 * "*")
+        print(response)
+        print(30 * "*", "response-end", 20 * "*")
 
         self.client_connect.sendall(response.encode())
         self.client_connect.close()
