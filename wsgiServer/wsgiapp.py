@@ -9,4 +9,4 @@ def app(envison, start_response):
 
     start_response(status, request_header)
 
-    return "Hello World from simple WSGI application"
+    return b"Hello World from simple WSGI application"
